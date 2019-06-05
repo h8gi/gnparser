@@ -1,0 +1,36 @@
+---
+title: "gnparser"
+date: "`r lubridate::today()`"
+output: revealjs::revealjs_presentation
+---
+
+```{r setup, include = FALSE}
+library(knitr)
+library(tidyverse)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+# パーサーってなに
+
+## パーサーとは
+
+`aaa`
+
+
+## PEG
+
+`aaa`
+
+
+### hybrid
+
+雑種の表記
+
+
+# 八木の今後について
+
+## サイエンスミュージアムネット
+
+
+
+# このスライドは
