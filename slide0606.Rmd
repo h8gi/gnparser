@@ -14,7 +14,31 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ---
 
-あああ
+# "gnparser": a powerful parser for scientific names based on Parsing Expression Grammar
+
+- 生物の学名表記には微妙なバリエーションがある
+- それらをパースする既存のソフトウェアには速度、正確性などの点で問題がある
+- プログラム言語などのパーサーに用いられている技術を使うことで、それらの問題を解決した
+
+---
+
+# 生物の学名表記
+![**Carex scirpoidea convoluta**の様々な表記](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5446698/bin/12859_2017_1663_Fig1_HTML.jpg)
+
+<!-- - var. が subsp. に変更された -->
+
+---
+
+# 生物の学名表記
+
+**Carex scirpoidea var. convoluta Kükenthal** という文字列から
+
+- genus: Carex
+- species: scirpoidea
+- variety: convoluta
+- author: Kükenthal
+
+の情報を手にいれるパーサーが必要
 
 ---
 
@@ -37,6 +61,15 @@ knitr::opts_chunk$set(cache = TRUE)
 ```{r}
 quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 ```
+
+---
+
+## 既存のパーサー1 GBIF Name Parser
+
+- Global Biodiversity Information Facilityが公開しているパーサー
+  - `http://api.gbif.org/v1/parser/name?name=Carex scirpoidea var. convoluta Kükenthal`
+	のように、URLのパラメーターに文字列を与えることでパースしてくれる
+- 正規表現による実装
 
 ---
 
@@ -68,12 +101,21 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 ---
 
+## 既存のパーサー2 biodiversity
+
+- rubyによる生物学名のパーサーライブラリ
+- https://github.com/GlobalNamesArchitecture/biodiversity
+`gem install biodiversity`
+- 正規表現ではなくPEGを利用している
+
+---
+
 ## Parsing Expression Grammar (PEG)
 
 - ある形式言語の文法を表現するための手法 
 - ≒ プログラム言語のパーサーを書くための手法
 - 正規表現では表現不可能だった再帰も扱える
-- Yaccと似たようなもの
+- Yacc(Yet Another Compiler Compiler)と似たようなもの 
 
 ---
 
@@ -90,12 +132,18 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 - 上のPEG規則から、パーサーが生成される
 - そのパーサーを使うことで、天気概要をパースできる
 
+---
+
+## gnparser
+
+- Scala言語で実装(現在はGo言語)
+- biodiversityの問題点
+
+## 正確性の比較
 
 ---
 
-### hybrid
-
-雑種の表記
+## 速度の比較
 
 ---
 
@@ -105,6 +153,11 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 ## サイエンスミュージアムネット
 
+- 日本全国の博物館標本データ
+
+## Use Go from R
 
 
-# このスライドは
+---
+
+## このスライドはRmarkdownで生成しました
