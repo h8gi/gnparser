@@ -26,12 +26,13 @@ knitr::opts_chunk$set(cache = TRUE)
 ![**Carex scirpoidea convoluta**の様々な表記](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5446698/bin/12859_2017_1663_Fig1_HTML.jpg)
 
 <!-- - var. が subsp. に変更された -->
+**様々な表記が同一の種を示している**
 
 ---
 
 # 生物の学名表記
 
-**Carex scirpoidea var. convoluta Kükenthal** という文字列から
+名寄せ(reconciliation)のために、**Carex scirpoidea var. convoluta Kükenthal** という文字列から
 
 - genus: Carex
 - species: scirpoidea
@@ -163,8 +164,15 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 ## サイエンスミュージアムネット
 
 - 日本全国の博物館標本データ
+- 解析のために、種名の名寄せ(reconciliation)が必要な場合がある
+- ひとまずgnparserをつかいたい
 
 ---
 
 ## Use Go from R
 
+
+## さらなる展望
+
+- gnparserで対応できない細かい例外
+	- アルファベット表記の和名が学名に付属している場合など
