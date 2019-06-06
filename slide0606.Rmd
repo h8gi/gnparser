@@ -104,6 +104,8 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 ## 既存のパーサー2 biodiversity
 
 - rubyによる生物学名のパーサーライブラリ
+	- 文字列処理に強い
+	- DSLの充実
 - https://github.com/GlobalNamesArchitecture/biodiversity
 `gem install biodiversity`
 - 正規表現ではなくPEGを利用している
@@ -136,9 +138,14 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 ## gnparser
 
-- Scala言語で実装(現在はGo言語)
+- Scala言語で実装
+	- Javaの上につくられた言語
+	- 色んな環境で動かしやすい
+	- Javaよりおしゃれ
+	- DSLも書きやすい
 - biodiversityの問題点
-
+	- rubyによる速度の制約
+   
 ---
 
 ## 正確性の比較
