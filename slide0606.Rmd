@@ -1,6 +1,5 @@
 ---
-title: "\"gnparser\": a powerful parser for scientific names based on Parsing
-Expression Grammar"
+title: "\"gnparser\": a powerful parser for scientific names based on Parsing Expression Grammar"
 date: "`r lubridate::today()`"
 author: "八木浩樹"
 output: xaringan::moon_reader
@@ -17,6 +16,7 @@ knitr::opts_chunk$set(cache = TRUE)
 - 生物の学名表記には微妙なバリエーションがある
 - それらをパースする既存のソフトウェアには速度、正確性などの点で問題がある
 - プログラム言語などのパーサーに用いられている技術を使うことで、それらの問題を解決した
+- (本日のスライド資料は https://github.com/h8gi/gnparser にあります)
 
 ---
 
@@ -169,12 +169,17 @@ Expr ← Sum
 	- Javaよりおしゃれ
 	- DSLが書きやすい
     - rubyよりも速い
+
+
+![](./scala.png)
 ]
+
 
 --
 
 .pull-right[
 - biodiversityと同じくPEGを利用
+- 年をパースするコード↓
 
 ![PEG for Year](https://media.springernature.com/lw785/springer-static/image/art%3A10.1186%2Fs12859-017-1663-3/MediaObjects/12859_2017_1663_Figa_HTML.gif)
 ]
@@ -183,10 +188,10 @@ Expr ← Sum
 
 ## 正確性の比較
 
-- biodiversity、GBIF、gnparserの3つで比較した
+- biodiversity、GBIF、gnparserの3つのパーサーを比較した
 - 不正確な表記も含む学名のリストを処理させた
 - データは http://gni.globalnames.org/ を利用した
-- gniは、様々なデータベースから生物の学名を集めて利用できるようにしているサービス
+	- gniは、様々なデータベースから生物の学名を集めて利用できるようにしているサービス
 
 --
 
@@ -195,6 +200,7 @@ Expr ← Sum
 - species: lycopodioides
 - variety: glabriusculum
 - authorchip: Reiche
+
 の情報を上手くとれるかどうかを見た
 
 ---
@@ -239,12 +245,15 @@ Expr ← Sum
 
 ---
 
-## サイエンスミュージアムネット
+## サイエンスミュージアムネット(S-net)
 
 .pull-left[
-- 日本全国の博物館標本データ
+- 日本全国の博物館標本データを集積するウェブサービス
 - 解析のために、種名の名寄せ(reconciliation)が必要な場合がある
-- ひとまずgnparserをつかいたい
+- gnparserを利用してみる
+	- 最新版のgnparserはGoで書かれている
+	- 配布した資料はRからGoを使う方法です
+	- せっかくなのでパッケージにしてみようと思います
 ]
 
 .pull-right[
@@ -253,11 +262,26 @@ Expr ← Sum
 
 ---
 
-## Use Go from R
+## 問題点
+
+- GBIFのようなAPIがない
+	- データを無理矢理スクレイピングしてから解析している状態
+- gnparserで対応できない細かい例外
+	- アルファベット表記の和名が学名に付属している場合など
+	- パーサーに細かな規則を簡単に追加できるようなシステムが必要?
+- gnparserの先にある問題
+	- 綴りの間違いなど
+- 種名以外の問題
+	- 県名が旧国名
 
 ---
 
-## さらなる展望
+## 展望
 
-- gnparserで対応できない細かい例外
-	- アルファベット表記の和名が学名に付属している場合など
+- S-net API の開発
+	- データのスクレイピングツールは完成しているので、それを利用してみる
+- 新たな規則を追加しやすいgnparserの開発
+	- PEGの規則を Scratch のように追加できる仕組み
+- エラーの多いデータセットの場合、統計的なパースの手法が良いかもしれない
+	- 自然言語処理的なアプローチ
+	- mecabなど

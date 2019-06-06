@@ -2,7 +2,10 @@
 title: "Using \"gnparser\" from R"
 date: "`r lubridate::today()`"
 author: "Hiroki Yagi"
-output: pdf_document
+output: 
+  pdf_document:
+    latex_engine: lualatex
+documentclass: ltjsarticle
 ---
 
 ## "gnparser" is now written in Go!
