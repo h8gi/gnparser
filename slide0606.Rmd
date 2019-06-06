@@ -139,6 +139,8 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 - Scala言語で実装(現在はGo言語)
 - biodiversityの問題点
 
+---
+
 ## 正確性の比較
 
 ---
@@ -155,9 +157,7 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 - 日本全国の博物館標本データ
 
-## Use Go from R
-
-
 ---
 
-## このスライドはRmarkdownで生成しました
+## Use Go from R
+
