@@ -1,0 +1,57 @@
+---
+title: "Using \"gnparser\" from R"
+date: "`r lubridate::today()`"
+author: "Hiroki Yagi"
+output: pdf_document
+---
+
+## "gnparser" is now written in Go!
+> We do not have a Scala expert in our group anymore, therefore we ported gnparser to Go. We strongly recommend to switch to new version and submit bugs/suggestions according to its CONTRIBUTING doc.
+
+## Go from R
+
+`gnparser.go`
+```{go, eval = FALSE}
+package main
+
+import (
+	"C"
+
+	"gitlab.com/gogna/gnparser"
+)
+import "unsafe"
+
+var gnp = gnparser.NewGNparser()
+
+//export Parse
+func Parse(x string) uintptr {
+	gnp.Parse(x)
+	res, _ := gnp.ToPrettyJSON()
+	return uintptr(unsafe.Pointer(&res[0]))
+}
+
+func main() {
+}
+```
+
+`rgo.c`
+```{c, eval = FALSE}
+#include <R.h>
+#include <Rinternals.h>
+
+extern char* Parse();
+
+SEXP gognparse(SEXP x) {
+  return Rf_mkString(Parse(STRING_PTR(x)));
+}
+```
+
+\newpage
+
+Now you can use "gnparser" from R like below.
+```{sh, eval = FALSE}
+$ go get -u "gitlab.com/gogna/gnparser"
+$ go build -o libgnparser.so -buildmode=c-shared ./gnparser.go
+$ R CMD SHLIB -L. -lgnparser rgo.c
+$ Rscript -e 'dyn.load("rgo.so"); .Call("gognparse", "Carex scirpoidea var. convoluta Kükenthal")'
+```

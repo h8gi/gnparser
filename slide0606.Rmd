@@ -3,7 +3,7 @@ title: "\"gnparser\": a powerful parser for scientific names based on Parsing
 Expression Grammar"
 date: "`r lubridate::today()`"
 author: "八木浩樹"
-output: slidy_presentation
+output: xaringan::moon_reader
 ---
 
 ```{r setup, include = FALSE}
@@ -11,8 +11,6 @@ library(knitr)
 library(tidyverse)
 knitr::opts_chunk$set(cache = TRUE)
 ```
-
----
 
 # "gnparser": a powerful parser for scientific names based on Parsing Expression Grammar
 
@@ -22,7 +20,8 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ---
 
-# 生物の学名表記
+
+## 生物の学名表記
 ![**Carex scirpoidea convoluta**の様々な表記](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5446698/bin/12859_2017_1663_Fig1_HTML.jpg)
 
 <!-- - var. が subsp. に変更された -->
@@ -30,14 +29,14 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ---
 
-# 生物の学名表記
+## 生物の学名表記
 
 名寄せ(reconciliation)のために、**Carex scirpoidea var. convoluta Kükenthal** という文字列から
 
 - genus: Carex
 - species: scirpoidea
 - variety: convoluta
-- author: Kükenthal
+- authorchip: Kükenthal
 
 の情報を手にいれるパーサーが必要
 
@@ -58,19 +57,27 @@ knitr::opts_chunk$set(cache = TRUE)
 ね      助詞,終助詞,*,*,*,*,ね,ネ,ネ
 ```
 - 自然言語はパースが難しい
-- プログラミング言語はパースしやすい(そう作られているため)
-```{r}
-quote(3 * 5 + sqrt(3)) %>% as.list %>% str
-```
 
 ---
 
-## 既存のパーサー1 GBIF Name Parser
+# パーサーってなに
+- プログラミング言語はパースしやすい(そう作られているため)
+- Rのパース↓
+```{r}
+quote(3 * 5 + sqrt(3)) %>% as.list %>% str
+```
+- 学名は厳密な規則に従って表記されているはずなので、パースしやすいはず
 
+---
+
+## GBIF Name Parser
+
+- https://www.gbif.org/tools/name-parser
 - Global Biodiversity Information Facilityが公開しているパーサー
   - `http://api.gbif.org/v1/parser/name?name=Carex scirpoidea var. convoluta Kükenthal`
-	のように、URLのパラメーターに文字列を与えることでパースしてくれる
-- 正規表現による実装
+	
+    のように、URLのパラメーターに文字列を与えることでパースしてくれる
+- 正規表現を利用している
 
 ---
 
@@ -81,7 +88,7 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 - 主に文字列のマッチングに使われる
 - パースのために使おうと思えば使えないこともない
 
---- 
+---
 
 ## パースのために使おうと思えば使えないこともない 
 ### 気象庁の天気概要を例に
@@ -96,19 +103,25 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 > (快晴|晴|曇|薄曇|大風|霧|霧雨|雨|大雨|暴風雨|みぞれ|雪|大雪|暴風雪|地ふぶき|ふぶき|ひょう|あられ|雷|×)(?:((一時|時々|後|後一時|後時々)(快晴|晴|曇|薄曇|大風|霧|霧雨|雨|大雨|暴風雨|みぞれ|雪|大雪|暴風雪|地ふぶき|ふぶき|ひょう|あられ|雷|×)){0,3})(?:、(快晴|晴|曇|薄曇|大風|霧|霧雨|雨|大雨|暴風雨|みぞれ|雪|大雪|暴風雪|地ふぶき|ふぶき|ひょう|あられ|雷|×)を伴う)?
 
+--
+
 - 人間のやることではない
+
+--
+
 - 再帰構造を表現できないなど、根本的な限界がある
     - 雑種の学名は "学名 × 学名" という再帰構造をもつ
 
 ---
 
-## 既存のパーサー2 biodiversity
+## biodiversity
 
 - rubyによる生物学名のパーサーライブラリ
+- rubyの利点
 	- 文字列処理に強い
 	- DSLの充実
 - https://github.com/GlobalNamesArchitecture/biodiversity
-`gem install biodiversity`
+- `gem install biodiversity`
 - 正規表現ではなくPEGを利用している
 
 ---
@@ -119,6 +132,13 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 - ≒ プログラム言語のパーサーを書くための手法
 - 正規表現では表現不可能だった再帰も扱える
 - Yacc(Yet Another Compiler Compiler)と似たようなもの 
+- ↓数式を認識するPEG
+```
+Value ← [0-9]+ / '(' Expr ')'
+Product ← Value (('*' / '/') Value)*
+Sum ← Product (('+' / '-') Product)*
+Expr ← Sum
+```
 
 ---
 
@@ -134,26 +154,84 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 - 上のPEG規則から、パーサーが生成される
 - そのパーサーを使うことで、天気概要をパースできる
+--
+
+- 場合によっては正規表現より遅い(rubyだとなおさら)
 
 ---
 
 ## gnparser
 
+.pull-left[
 - Scala言語で実装
 	- Javaの上につくられた言語
 	- 色んな環境で動かしやすい
 	- Javaよりおしゃれ
-	- DSLも書きやすい
-- biodiversityの問題点
-	- rubyによる速度の制約
-   
+	- DSLが書きやすい
+    - rubyよりも速い
+]
+
+--
+
+.pull-right[
+- biodiversityと同じくPEGを利用
+
+![PEG for Year](https://media.springernature.com/lw785/springer-static/image/art%3A10.1186%2Fs12859-017-1663-3/MediaObjects/12859_2017_1663_Figa_HTML.gif)
+]
+
 ---
 
 ## 正確性の比較
 
+- biodiversity、GBIF、gnparserの3つで比較した
+- 不正確な表記も含む学名のリストを処理させた
+- データは http://gni.globalnames.org/ を利用した
+- gniは、様々なデータベースから生物の学名を集めて利用できるようにしているサービス
+
+--
+
+**Oriastrum lycopodioides Wedd. var. glabriusculum Reiche** のような文字列から
+- genus: Oriastrum
+- species: lycopodioides
+- variety: glabriusculum
+- authorchip: Reiche
+の情報を上手くとれるかどうかを見た
+
+---
+
+## 正確性の比較: どれだけ正解しているか
+![](./table1.png)
+
+- 正解の割合(Accuracy)はどれも十分に高かった
+
+---
+
+## 正確性の比較: パースできないとう判断の精度
+![](./table2.png)
+
+- gbif-parserは、問題の無い学名をパースできないことが多かった
+- これは再帰構造をパースできない正規表現の限界によるものだった
+    - 雑種(学名 × 学名)など
+- ここまでbiodiversityとgnparserの間に大きな差はみられなかった
+
 ---
 
 ## 速度の比較
+.pull-left[
+![](https://media.springernature.com/full/springer-static/image/art%3A10.1186%2Fs12859-017-1663-3/MediaObjects/12859_2017_1663_Fig3_HTML.gif)
+]
+
+.pull-right[
+- gnparserとgbif-parserの差は少なかった
+- biodiversityは10倍程度遅かった
+- 大量のデータを扱う場合、この違いは重要である
+]
+
+---
+
+## 機能まとめ
+
+![](./table3.png)
 
 ---
 
@@ -163,14 +241,21 @@ quote(3 * 5 + sqrt(3)) %>% as.list %>% str
 
 ## サイエンスミュージアムネット
 
+.pull-left[
 - 日本全国の博物館標本データ
 - 解析のために、種名の名寄せ(reconciliation)が必要な場合がある
 - ひとまずgnparserをつかいたい
+]
+
+.pull-right[
+![](./snet.png)
+]
 
 ---
 
 ## Use Go from R
 
+---
 
 ## さらなる展望
 
